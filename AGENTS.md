@@ -4,13 +4,13 @@ Fly.io machine monitoring service that tracks billing-relevant events (start/sto
 
 ## Commands
 
-- **Install dependencies**: `bun install`
+- **Install dependencies**: `pnpm install`
 - **Run main file**: `bun run src/bun/main.ts`
-- **Run tests**: `bun test`
-- **Run single test**: `bun test --test-name-pattern "test name"`
-- **Type check**: `bun tsc --noEmit`
-- **Format**: `bun run format` (prettier --write .)
-- **Format check**: `bun run format:check`
+- **Run tests**: `pnpm test`
+- **Run single test**: `pnpm test --test-name-pattern "test name"`
+- **Type check**: `pnpm tsc --noEmit`
+- **Format**: `pnpm format` (prettier --write .)
+- **Format check**: `pnpm format:check`
 
 ## Code Style
 

@@ -17,7 +17,7 @@ Monitors personal Fly.io development servers to prevent runaway costs. Since Fly
 ### 1. Install
 
 ```bash
-bun install
+pnpm install
 ```
 
 ### 2. Configure Environment
@@ -50,19 +50,19 @@ Create webhook in Discord server settings and add URL to `.env.local`.
 ### Development
 
 ```bash
-bun run start
+pnpm start
 ```
 
 ### Production Deployment
 
 ```bash
-bun run cf-deploy
+pnpm cf-deploy
 ```
 
 ### Local Workers Development
 
 ```bash
-bun run cf-dev
+pnpm cf-dev
 ```
 
 ## Environment Variables
@@ -94,11 +94,11 @@ Both use identical schema with `machines` and `events` tables for tracking state
 ## Development
 
 ```bash
-bun test                    # Run tests
-bun test --test-name-pattern "name"  # Run specific test
-bun tsc --noEmit            # Type check
-bun run format              # Format code
-bun run format:check        # Check formatting
+pnpm test                    # Run tests
+pnpm test --test-name-pattern "name"  # Run specific test
+pnpm tsc --noEmit            # Type check
+pnpm format                  # Format code
+pnpm format:check            # Check formatting
 ```
 
 ## Project Structure
