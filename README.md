@@ -119,6 +119,7 @@ pnpm format:check            # Check formatting
 - [ ] Support multiple Discord channels per app
 - [ ] Add machine cost estimation
 - [ ] Implement alert rate limiting
+- [ ] Fix Discord webhook reliability from Cloudflare Workers: https://qiita.com/tana_p/items/3628e8f953df2af25e8d
 
 ## License
 
