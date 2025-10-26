@@ -34,7 +34,7 @@ export default {
 		// 	const monitor = await getMonitor()
 		// 	await monitor.start()
 		// 	return new Response('Cron job executed', { status: 200 })
-		// }
+		/// }
 
 		return new Response('Not Found', { status: 404 })
 	},
