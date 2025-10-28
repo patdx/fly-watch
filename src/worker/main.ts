@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:workers'
 import { once } from 'lodash-es'
-import { DiscordNotifier } from '../discord.js'
+import { TelegramNotifier } from '../telegram.js'
 import { FlyAPIClient } from '../fly-api.js'
 import { FlyMachineMonitor } from '../monitor.js'
 import { StorageD1 } from '../storage-d1'
@@ -17,8 +17,12 @@ const getMonitor = once(async () => {
 		env.FLY_ORG_SLUG,
 		LOG_LEVEL,
 	)
-	const discord = new DiscordNotifier(env.DISCORD_WEBHOOK_URL, LOG_LEVEL)
-	const monitor = new FlyMachineMonitor(apiClient, discord, storage, LOG_LEVEL)
+	const telegram = new TelegramNotifier(
+		env.TELEGRAM_BOT_TOKEN,
+		env.TELEGRAM_CHAT_ID,
+		LOG_LEVEL,
+	)
+	const monitor = new FlyMachineMonitor(apiClient, telegram, storage, LOG_LEVEL)
 
 	return monitor
 })

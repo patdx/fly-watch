@@ -1,13 +1,14 @@
 import { StorageBun } from '../storage-bun.js'
 import { FlyMachineMonitor } from '../monitor.js'
 import { FlyAPIClient } from '../fly-api.js'
-import { DiscordNotifier } from '../discord.js'
+import { TelegramNotifier } from '../telegram.js'
 import { log } from '../utils.js'
 
 // Environment configuration for Bun runtime
 const FLY_API_TOKEN = process.env.FLY_API_TOKEN!
 const FLY_ORG_SLUG = process.env.FLY_ORG_SLUG!
-const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL!
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID!
 const LOG_LEVEL = 'info'
 
 // Create and export the default storage instance
@@ -18,8 +19,12 @@ async function main() {
 	await storage.initialize()
 
 	const apiClient = new FlyAPIClient(FLY_API_TOKEN, FLY_ORG_SLUG, LOG_LEVEL)
-	const discord = new DiscordNotifier(DISCORD_WEBHOOK_URL, LOG_LEVEL)
-	const monitor = new FlyMachineMonitor(apiClient, discord, storage, LOG_LEVEL)
+	const telegram = new TelegramNotifier(
+		TELEGRAM_BOT_TOKEN,
+		TELEGRAM_CHAT_ID,
+		LOG_LEVEL,
+	)
+	const monitor = new FlyMachineMonitor(apiClient, telegram, storage, LOG_LEVEL)
 	await monitor.start()
 }
 

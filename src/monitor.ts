@@ -1,4 +1,4 @@
-import type { DiscordNotifier } from './discord.js'
+import type { NotifierInterface } from './notifier-interface.js'
 import type { FlyAPIClient } from './fly-api.js'
 import type { StorageInterface } from './storage-interface.js'
 import type { FlyEvent, Machine } from './types.js'
@@ -6,18 +6,18 @@ import { log } from './utils.js'
 
 export class FlyMachineMonitor {
 	private apiClient: FlyAPIClient
-	private discord: DiscordNotifier
+	private notifier: NotifierInterface
 	private storage: StorageInterface
 	private logLevel: string
 
 	constructor(
 		apiClient: FlyAPIClient,
-		discord: DiscordNotifier,
+		notifier: NotifierInterface,
 		storage: StorageInterface,
 		logLevel: string = 'info',
 	) {
 		this.apiClient = apiClient
-		this.discord = discord
+		this.notifier = notifier
 		this.storage = storage
 		this.logLevel = logLevel
 	}
@@ -158,9 +158,9 @@ export class FlyMachineMonitor {
 				notified: false,
 			})
 
-			// Send Discord notification
-			const message = this.discord.formatEvent(machine, event)
-			await this.discord.sendAlert(message)
+			// Send notification
+			const message = this.notifier.formatEvent(machine, event)
+			await this.notifier.sendAlert(message)
 
 			// Mark this specific event as notified
 			if (eventId) {

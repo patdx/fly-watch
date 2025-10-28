@@ -1,12 +1,14 @@
 # Fly Machine Monitor
 
-Monitors personal Fly.io development servers to prevent runaway costs. Since Fly.io lacks webhook APIs for machine events, this service polls the events API and sends Discord alerts for billing-relevant activity. Built with Bun for development, deployed as Cloudflare Workers cron job.
+Monitors personal Fly.io development servers to prevent runaway costs. Since Fly.io lacks webhook APIs for machine events, this service polls the events API and sends Telegram alerts for billing-relevant activity. Built with Bun for development, deployed as Cloudflare Workers cron job.
+
+**Note:** This project originally used Discord webhooks but was migrated to Telegram due to rate limiting issues when sending notifications from Cloudflare Workers. Telegram provides more reliable delivery for automated monitoring alerts.
 
 ## Features
 
 - Polls Fly.io events API (no webhook support available)
 - Detects billing-relevant events (start/stop/exit)
-- Sends Discord alerts for cost monitoring
+- Sends Telegram alerts for cost monitoring
 - Prevents duplicate notifications via event tracking
 - Abstract storage interface (SQLite/D1)
 - Configurable polling intervals
@@ -31,7 +33,8 @@ Edit `.env.local` with your values (git-ignored):
 ```bash
 FLY_API_TOKEN=your_fly_api_token_here
 FLY_ORG_SLUG=your_fly_organization_slug
-DISCORD_WEBHOOK_URL=your_discord_webhook_url_here
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+TELEGRAM_CHAT_ID=your_telegram_chat_id_here
 LOG_LEVEL=info
 ```
 
@@ -41,9 +44,33 @@ LOG_LEVEL=info
 fly tokens create readonly --name "fly-machine-monitor"
 ```
 
-### 4. Set Up Discord Webhook
+### 4. Set Up Telegram Bot
 
-Create webhook in Discord server settings and add URL to `.env.local`.
+**Why Telegram?** Discord webhooks were getting rate limited when deployed on Cloudflare Workers, causing missed alerts. Telegram's bot API is more reliable for automated notifications.
+
+**Step-by-step setup:**
+
+1. **Create your bot:**
+   - Open Telegram and search for **@BotFather**
+   - Send `/newbot` command
+   - Follow the prompts to name your bot (e.g., "Fly Machine Monitor")
+   - BotFather will give you a **bot token** - save this!
+
+2. **Get your Chat ID:**
+   - Start a chat with your new bot by sending it any message
+   - Visit this URL in your browser (replace `YOUR_BOT_TOKEN`):
+     ```
+     https://api.telegram.org/botYOUR_BOT_TOKEN/getUpdates
+     ```
+   - Look for the `"chat":{"id":123456789}` field - that number is your chat ID
+
+3. **Add to environment:**
+   ```bash
+   TELEGRAM_BOT_TOKEN=your_bot_token_here
+   TELEGRAM_CHAT_ID=your_chat_id_here
+   ```
+
+**Security tip:** Keep your bot token and chat ID private - they allow anyone to send messages through your bot.
 
 ## Usage
 
@@ -67,12 +94,13 @@ pnpm cf-dev
 
 ## Environment Variables
 
-| Variable              | Required | Description              | Default |
-| --------------------- | -------- | ------------------------ | ------- |
-| `FLY_API_TOKEN`       | Yes      | Fly.io API token         | -       |
-| `FLY_ORG_SLUG`        | Yes      | Fly.io organization slug | -       |
-| `DISCORD_WEBHOOK_URL` | Yes      | Discord webhook URL      | -       |
-| `LOG_LEVEL`           | No       | Logging level            | `info`  |
+| Variable             | Required | Description              | Default |
+| -------------------- | -------- | ------------------------ | ------- |
+| `FLY_API_TOKEN`      | Yes      | Fly.io API token         | -       |
+| `FLY_ORG_SLUG`       | Yes      | Fly.io organization slug | -       |
+| `TELEGRAM_BOT_TOKEN` | Yes      | Telegram bot token       | -       |
+| `TELEGRAM_CHAT_ID`   | Yes      | Telegram chat ID         | -       |
+| `LOG_LEVEL`          | No       | Logging level            | `info`  |
 
 ## Monitored Events
 
@@ -108,6 +136,8 @@ pnpm format:check            # Check formatting
 - `src/storage-interface.ts` - Abstract storage interface
 - `src/storage-bun.ts` - SQLite implementation
 - `src/storage-d1.ts` - D1 implementation
+- `src/notifier-interface.ts` - Abstract notifier interface
+- `src/telegram.ts` - Telegram notification implementation
 - `src/*.test.ts` - Test files
 
 ## TODO
@@ -116,10 +146,11 @@ pnpm format:check            # Check formatting
 - [ ] Add configurable retention period for events
 - [ ] Implement cleanup job for old events
 - [ ] Add metrics/monitoring for the service itself
-- [ ] Support multiple Discord channels per app
+- [ ] Support multiple Telegram chats per app
 - [ ] Add machine cost estimation
 - [ ] Implement alert rate limiting
-- [ ] Fix Discord webhook reliability from Cloudflare Workers: https://qiita.com/tana_p/items/3628e8f953df2af25e8d
+- [ ] Add Telegram message formatting improvements
+- [ ] Add inline buttons for quick actions (stop/restart machines)
 
 ## License
 

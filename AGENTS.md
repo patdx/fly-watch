@@ -1,6 +1,6 @@
 # Agent Guidelines for my-fly-checker
 
-Fly.io machine monitoring service that tracks billing-relevant events (start/stop/suspend) and sends alerts via Discord. Built with Bun for development, deployed as Cloudflare Workers cron job.
+Fly.io machine monitoring service that tracks billing-relevant events (start/stop/suspend) and sends alerts via Telegram. Built with Bun for development, deployed as Cloudflare Workers cron job.
 
 ## Commands
 
@@ -29,7 +29,7 @@ Fly.io machine monitoring service that tracks billing-relevant events (start/sto
 - Check Fly.io recent events API, not just current status
 - Track last known event to detect changes
 - Report start/stop/suspend status changes
-- Send alerts to custom Discord channel
+- Send alerts to custom Telegram chat
 - Store event history to prevent duplicate alerts
 - Use environment variables for API tokens
 - Use abstract storage interface for easy storage backend swapping
@@ -40,5 +40,7 @@ Fly.io machine monitoring service that tracks billing-relevant events (start/sto
 - Production entry point: `src/worker/main.ts` (Cloudflare Workers cron job)
 - Storage interface: `storage-interface.ts` (abstract class)
 - Storage implementations: `storage-bun.ts`, `storage-d1.ts` (SQLite/D1 with Kysely)
+- Notifier interface: `notifier-interface.ts` (abstract interface)
+- Notifier implementations: `telegram.ts` (Telegram notifications)
 - Module type: ESM
 - Private project with TypeScript peer dependency
